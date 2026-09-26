@@ -1,0 +1,11 @@
+\begin{tabular}{llcccccc}
+\toprule
+model & train steps & params & test steps & 1 to 4 & 5 to 8 & 9 to 12$^\dagger$ & 13 to 16$^\dagger$ \\
+\midrule
+z-reason & random & 4.1M & 8 & 100.0\,$\pm$\,0.0 & 100.0\,$\pm$\,0.0 & 100.0\,$\pm$\,0.0 & 99.3\,$\pm$\,0.5 \\
+z-reason & random & 4.1M & 32 & 100.0\,$\pm$\,0.0 & 100.0\,$\pm$\,0.0 & 100.0\,$\pm$\,0.0 & 100.0\,$\pm$\,0.0 \\
+z-reason & fixed 8 & 4.1M & 8 & 100.0 & 100.0 & 58.1 & 14.2 \\
+z-reason & fixed 8 & 4.1M & 32 & 99.9 & 95.7 & 75.9 & 73.8 \\
+untied transformer & none & 15.1M & 8 & 100.0 & 100.0 & 38.2 & 36.1 \\
+\bottomrule
+\end{tabular}

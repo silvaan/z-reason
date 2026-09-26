@@ -1,0 +1,249 @@
+\begin{thebibliography}{32}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Wei et~al.(2022)Wei, Wang, Schuurmans, Bosma, Ichter, Xia, Chi, Le,
+  and Zhou]{wei2022chain}
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia,
+  Ed~Chi, Quoc Le, and Denny Zhou.
+\newblock Chain-of-thought prompting elicits reasoning in large language
+  models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~35, 2022.
+\newblock arXiv:2201.11903.
+
+\bibitem[Snell et~al.(2025)Snell, Lee, Xu, and Kumar]{snell2024scaling}
+Charlie Snell, Jaehoon Lee, Kelvin Xu, and Aviral Kumar.
+\newblock Scaling {LLM} test-time compute optimally can be more effective than
+  scaling parameters for reasoning.
+\newblock In \emph{International Conference on Learning Representations}, 2025.
+\newblock arXiv:2408.03314 (as ``Scaling {LLM} Test-Time Compute Optimally can
+  be More Effective than Scaling Model Parameters'').
+
+\bibitem[{TypeSafe AI}(2026{\natexlab{a}})]{typesafe2026jev}
+{TypeSafe AI}.
+\newblock Introducing system one models \& {Jev}.
+\newblock \url{https://typesafe.ai/blog/introducing-system-one-models-and-jev},
+  2026{\natexlab{a}}.
+\newblock Blog post by Diogo Almeida, 15 September 2026. Accessed 2026-09-26.
+
+\bibitem[{TypeSafe AI}(2026{\natexlab{b}})]{typesafe2026docs}
+{TypeSafe AI}.
+\newblock {API} reference.
+\newblock \url{https://docs.typesafe.ai/api.md}, 2026{\natexlab{b}}.
+\newblock TypeSafe {API} documentation. Accessed 2026-09-26.
+
+\bibitem[Ho et~al.(2020)Ho, Jain, and Abbeel]{ho2020ddpm}
+Jonathan Ho, Ajay Jain, and Pieter Abbeel.
+\newblock Denoising diffusion probabilistic models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~33, 2020.
+\newblock arXiv:2006.11239.
+
+\bibitem[Schwarzschild et~al.(2021)Schwarzschild, Borgnia, Gupta, Huang,
+  Vishkin, Goldblum, and Goldstein]{schwarzschild2021learn}
+Avi Schwarzschild, Eitan Borgnia, Arjun Gupta, Furong Huang, Uzi Vishkin, Micah
+  Goldblum, and Tom Goldstein.
+\newblock Can you learn an algorithm? {G}eneralizing from easy to hard problems
+  with recurrent networks.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~34, 2021.
+\newblock arXiv:2106.04537.
+
+\bibitem[Bansal et~al.(2022)Bansal, Schwarzschild, Borgnia, Emam, Huang,
+  Goldblum, and Goldstein]{bansal2022endtoend}
+Arpit Bansal, Avi Schwarzschild, Eitan Borgnia, Zeyad Emam, Furong Huang, Micah
+  Goldblum, and Tom Goldstein.
+\newblock End-to-end algorithm synthesis with recurrent networks: Logical
+  extrapolation without overthinking.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~35, 2022.
+\newblock arXiv:2202.05826.
+
+\bibitem[Geiping et~al.(2025)Geiping, McLeish, Jain, Kirchenbauer, Singh,
+  Bartoldson, Kailkhura, Bhatele, and Goldstein]{geiping2025scaling}
+Jonas Geiping, Sean McLeish, Neel Jain, John Kirchenbauer, Siddharth Singh,
+  Brian~R. Bartoldson, Bhavya Kailkhura, Abhinav Bhatele, and Tom Goldstein.
+\newblock Scaling up test-time compute with latent reasoning: A recurrent depth
+  approach.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~38, 2025.
+\newblock arXiv:2502.05171.
+
+\bibitem[Wang et~al.(2025)Wang, Li, Sun, Chen, Liu, Wu, Lu, Song, and
+  Abbasi~Yadkori]{wang2025hrm}
+Guan Wang, Jin Li, Yuhao Sun, Xing Chen, Changling Liu, Yue Wu, Meng Lu, Sen
+  Song, and Yasin Abbasi~Yadkori.
+\newblock Hierarchical reasoning model.
+\newblock \emph{arXiv preprint arXiv:2506.21734}, 2025.
+
+\bibitem[Jolicoeur-Martineau(2025)]{jolicoeur2025trm}
+Alexia Jolicoeur-Martineau.
+\newblock Less is more: Recursive reasoning with tiny networks.
+\newblock \emph{arXiv preprint arXiv:2510.04871}, 2025.
+
+\bibitem[Yang et~al.(2026)Yang, Han, Zhang, Wei, Shao, Guo, and
+  Li]{yang2026stars}
+Xiao-Wen Yang, Ziyu Han, Xi-Hua Zhang, Wen-Da Wei, Jie-Jing Shao, Lan-Zhe Guo,
+  and Yu-Feng Li.
+\newblock Stabilizing recurrent dynamics for test-time scalable latent
+  reasoning in looped language models.
+\newblock In \emph{International Conference on Machine Learning}, 2026.
+\newblock arXiv:2605.26733.
+
+\bibitem[Guo et~al.(2017)Guo, Pleiss, Sun, and Weinberger]{guo2017calibration}
+Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger.
+\newblock On calibration of modern neural networks.
+\newblock In \emph{Proceedings of the 34th International Conference on Machine
+  Learning}, volume~70 of \emph{Proceedings of Machine Learning Research},
+  2017.
+
+\bibitem[Gneiting and Raftery(2007)]{gneiting2007scoring}
+Tilmann Gneiting and Adrian~E. Raftery.
+\newblock Strictly proper scoring rules, prediction, and estimation.
+\newblock \emph{Journal of the American Statistical Association}, 102\penalty0
+  (477):\penalty0 359--378, 2007.
+\newblock \doi{10.1198/016214506000001437}.
+
+\bibitem[Hao et~al.(2025)Hao, Sukhbaatar, Su, Li, Hu, Weston, and
+  Tian]{hao2024coconut}
+Shibo Hao, Sainbayar Sukhbaatar, DiJia Su, Xian Li, Zhiting Hu, Jason Weston,
+  and Yuandong Tian.
+\newblock Training large language models to reason in a continuous latent
+  space.
+\newblock In \emph{Conference on Language Modeling ({COLM})}, 2025.
+\newblock arXiv:2412.06769.
+
+\bibitem[LeCun(2022)]{lecun2022path}
+Yann LeCun.
+\newblock A path towards autonomous machine intelligence.
+\newblock OpenReview, \url{https://openreview.net/forum?id=BZ5a1r-kVsf}, 2022.
+\newblock Version 0.9.2, 2022-06-27.
+
+\bibitem[Assran et~al.(2023)Assran, Duval, Misra, Bojanowski, Vincent, Rabbat,
+  LeCun, and Ballas]{assran2023ijepa}
+Mahmoud Assran, Quentin Duval, Ishan Misra, Piotr Bojanowski, Pascal Vincent,
+  Michael Rabbat, Yann LeCun, and Nicolas Ballas.
+\newblock Self-supervised learning from images with a joint-embedding
+  predictive architecture.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition ({CVPR})}, pages 15619--15629, 2023.
+
+\bibitem[{LCM team} et~al.(2024){LCM team}, Barrault, Duquenne, Elbayad,
+  Kozhevnikov, Alastruey, Andrews, Coria, Couairon, Costa-juss{\`a},
+  et~al.]{barrault2024lcm}
+{LCM team}, Lo{\"i}c Barrault, Paul-Ambroise Duquenne, Maha Elbayad, Artyom
+  Kozhevnikov, Belen Alastruey, Pierre Andrews, Mariano Coria, Guillaume
+  Couairon, Marta~R. Costa-juss{\`a}, et~al.
+\newblock Large concept models: Language modeling in a sentence representation
+  space.
+\newblock \emph{arXiv preprint arXiv:2412.08821}, 2024.
+
+\bibitem[Dehghani et~al.(2019)Dehghani, Gouws, Vinyals, Uszkoreit, and
+  Kaiser]{dehghani2019universal}
+Mostafa Dehghani, Stephan Gouws, Oriol Vinyals, Jakob Uszkoreit, and {\L}ukasz
+  Kaiser.
+\newblock Universal transformers.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+\newblock arXiv:1807.03819.
+
+\bibitem[Graves(2016)]{graves2016adaptive}
+Alex Graves.
+\newblock Adaptive computation time for recurrent neural networks.
+\newblock \emph{arXiv preprint arXiv:1603.08983}, 2016.
+
+\bibitem[Banino et~al.(2021)Banino, Balaguer, and
+  Blundell]{banino2021pondernet}
+Andrea Banino, Jan Balaguer, and Charles Blundell.
+\newblock {PonderNet}: Learning to ponder.
+\newblock \emph{arXiv preprint arXiv:2107.05407}, 2021.
+\newblock 8th ICML Workshop on Automated Machine Learning.
+
+\bibitem[Giannou et~al.(2023)Giannou, Rajput, Sohn, Lee, Lee, and
+  Papailiopoulos]{giannou2023looped}
+Angeliki Giannou, Shashank Rajput, Jy-yong Sohn, Kangwook Lee, Jason~D. Lee,
+  and Dimitris Papailiopoulos.
+\newblock Looped transformers as programmable computers.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning}, volume 202 of \emph{Proceedings of Machine Learning Research},
+  pages 11398--11442, 2023.
+
+\bibitem[Yang et~al.(2024)Yang, Lee, Nowak, and Papailiopoulos]{yang2024looped}
+Liu Yang, Kangwook Lee, Robert Nowak, and Dimitris Papailiopoulos.
+\newblock Looped transformers are better at learning learning algorithms.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+\newblock arXiv:2311.12424.
+
+\bibitem[Fan et~al.(2025)Fan, Du, Ramchandran, and Lee]{fan2024looped}
+Ying Fan, Yilun Du, Kannan Ramchandran, and Kangwook Lee.
+\newblock Looped transformers for length generalization.
+\newblock In \emph{International Conference on Learning Representations}, 2025.
+\newblock arXiv:2409.15647.
+
+\bibitem[Saunshi et~al.(2025)Saunshi, Dikkala, Li, Kumar, and
+  Reddi]{saunshi2025reasoning}
+Nikunj Saunshi, Nishanth Dikkala, Zhiyuan Li, Sanjiv Kumar, and Sashank~J.
+  Reddi.
+\newblock Reasoning with latent thoughts: On the power of looped transformers.
+\newblock In \emph{International Conference on Learning Representations}, 2025.
+\newblock arXiv:2502.17416.
+
+\bibitem[Bai et~al.(2019)Bai, Kolter, and Koltun]{bai2019deq}
+Shaojie Bai, J.~Zico Kolter, and Vladlen Koltun.
+\newblock Deep equilibrium models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~32, 2019.
+\newblock arXiv:1909.01377.
+
+\bibitem[Sanford et~al.(2024)Sanford, Hsu, and Telgarsky]{sanford2024logdepth}
+Clayton Sanford, Daniel Hsu, and Matus Telgarsky.
+\newblock Transformers, parallel computation, and logarithmic depth.
+\newblock In \emph{Proceedings of the 41st International Conference on Machine
+  Learning}, volume 235 of \emph{Proceedings of Machine Learning Research},
+  pages 43276--43327, 2024.
+
+\bibitem[Sghaier et~al.(2026)Sghaier, Parviz, and
+  Jolicoeur-Martineau]{sghaier2026ptrm}
+Amin Sghaier, Ali Parviz, and Alexia Jolicoeur-Martineau.
+\newblock Probabilistic tiny recursive model.
+\newblock \emph{arXiv preprint arXiv:2605.19943}, 2026.
+
+\bibitem[Kamiya et~al.(2026)Kamiya, Koyama, Jeong, Uchiyama, Kubo, Hayashi,
+  Suzuki, and Matsuo]{kamiya2026rofb}
+Shunsuke Kamiya, Masanori Koyama, Seongcheol Jeong, Fumiya Uchiyama, Kenji
+  Kubo, Kohei Hayashi, Masahiro Suzuki, and Yutaka Matsuo.
+\newblock Steering recurrent reasoners at inference time with readout feedback.
+\newblock \emph{arXiv preprint arXiv:2608.24136}, 2026.
+
+\bibitem[Fein-Ashley and Rashidinejad(2026)]{feinashley2026attractor}
+Jacob Fein-Ashley and Paria Rashidinejad.
+\newblock Solve the loop: Attractor models for language and reasoning.
+\newblock \emph{arXiv preprint arXiv:2605.12466}, 2026.
+
+\bibitem[Tur et~al.(2026)Tur, Naghiyev, Fang, Tsai, Duan, Fox, and
+  Krishna]{tur2026rdvla}
+Yalcin Tur, Jalal Naghiyev, Haoquan Fang, Wei-Chuan Tsai, Jiafei Duan, Dieter
+  Fox, and Ranjay Krishna.
+\newblock Recurrent-depth {VLA}: Implicit test-time compute scaling of
+  vision-language-action models via latent iterative reasoning.
+\newblock \emph{arXiv preprint arXiv:2602.07845}, 2026.
+
+\bibitem[Hsieh et~al.(2024)Hsieh, Sun, Kriman, Acharya, Rekesh, Jia, Zhang, and
+  Ginsburg]{hsieh2024ruler}
+Cheng-Ping Hsieh, Simeng Sun, Samuel Kriman, Shantanu Acharya, Dima Rekesh, Fei
+  Jia, Yang Zhang, and Boris Ginsburg.
+\newblock {RULER}: What's the real context size of your long-context language
+  models?
+\newblock In \emph{Conference on Language Modeling ({COLM})}, 2024.
+\newblock arXiv:2404.06654.
+
+\bibitem[Loshchilov and Hutter(2019)]{loshchilov2019adamw}
+Ilya Loshchilov and Frank Hutter.
+\newblock Decoupled weight decay regularization.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+\newblock arXiv:1711.05101.
+
+\end{thebibliography}

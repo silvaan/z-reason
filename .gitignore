@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# checkpoints (published separately)
+runs/*/model.pt
+
+# raw stdout logs; structured logs are in runs/*/log.jsonl
+runs/*.log
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/arxiv_submission.tar.gz

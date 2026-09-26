@@ -1,0 +1,36 @@
+{
+  "model": {
+    "vocab_size": 81,
+    "d": 256,
+    "heads": 8,
+    "n_enc": 2,
+    "n_core": 2,
+    "n_coda": 1,
+    "max_pos": 64,
+    "mlp_mult": 4,
+    "init_noise": 1.0,
+    "untied_steps": 8
+  },
+  "train": {
+    "out": "runs/untied8_s0",
+    "seed": 0,
+    "iters": 12000,
+    "bs": 128,
+    "lr": 0.0003,
+    "wd": 0.05,
+    "d": 256,
+    "n_core": 2,
+    "train_depth": 8,
+    "n_questions": 4,
+    "steps_mean": 12,
+    "max_steps": 32,
+    "grad_steps": 8,
+    "fixed_steps": 0,
+    "untied": 8,
+    "eval_every": 2000,
+    "workers": 6,
+    "curriculum": 0.8,
+    "level_step": 0.1
+  },
+  "params": 15121665
+}
