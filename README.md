@@ -1,6 +1,6 @@
 # z-reason
 
-Code for the preprint **Latent Reasoning Steps for Typed Decisions: Test-Time Compute for System-One Models**, by Silvan Ferreira, Thiago Medeiros and Ivanovitch Silva, Institute of Digital Metropolis, Federal University of Rio Grande do Norte. The PDF is in [`paper/main.pdf`](paper/main.pdf).
+Code for the preprint **Latent Reasoning Steps for Typed Decisions: Test-Time Compute for System-One Models**, by Silvan Ferreira of the Institute of Digital Metropolis at the Federal University of Rio Grande do Norte, Thiago Medeiros of the Federal Institute of Rio Grande do Norte, Campus Natal-Zona Leste, and Ivanovitch Silva of the Department of Computer Engineering and Automation at the Federal University of Rio Grande do Norte. The PDF is in [`paper/main.pdf`](paper/main.pdf).
 
 System-One models such as Jev answer typed questions about a state with calibrated probabilities over a predefined set of answers instead of generating text. They are fast and cannot return an answer outside the schema, but they spend the same computation on every question. z-reason keeps the same request and response interface and adds a `steps` parameter. Between encoding and read-out, a weight-tied block refines a latent state `z` for the requested number of steps, much as a diffusion sampler runs a chosen number of denoising steps, and more steps let the model answer harder questions.
 
