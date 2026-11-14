@@ -40,6 +40,7 @@ class ZConfig:
     mlp_mult: int = 4
     init_noise: float = 1.0
     untied_steps: int = 0  # >0: baseline with distinct core weights per step (fixed depth)
+    ext_dim: int = 0       # >0: texts arrive as precomputed vectors of this size (laya_features), not characters
 
 
 class RMSNorm(nn.Module):
@@ -82,9 +83,12 @@ class ZReasoner(nn.Module):
         super().__init__()
         self.cfg = cfg
         d = cfg.d
-        self.tok = nn.Embedding(cfg.vocab_size, d)
-        self.pos = nn.Embedding(cfg.max_pos, d)
-        self.enc = nn.ModuleList([Block(cfg) for _ in range(cfg.n_enc)])
+        if cfg.ext_dim:
+            self.ext = nn.Sequential(nn.Linear(cfg.ext_dim, d), nn.GELU(), nn.Linear(d, d))
+        else:
+            self.tok = nn.Embedding(cfg.vocab_size, d)
+            self.pos = nn.Embedding(cfg.max_pos, d)
+            self.enc = nn.ModuleList([Block(cfg) for _ in range(cfg.n_enc)])
         self.enc_norm = RMSNorm(d)
         self.kind = nn.Embedding(2, d)  # 0 = question slot, 1 = fact
         n_cores = max(cfg.untied_steps, 1)
@@ -113,6 +117,12 @@ class ZReasoner(nn.Module):
         w = valid.unsqueeze(-1).to(x.dtype)
         return self.enc_norm((x * w).sum(1) / w.sum(1)).view(*shape, -1)
 
+    def embed(self, batch, key: str) -> torch.Tensor:
+        """fact / q / opt texts -> vectors, from characters or from precomputed vectors."""
+        if self.cfg.ext_dim:
+            return self.enc_norm(self.ext(batch[f"{key}_vec"]))
+        return self.embed_text(batch[f"{key}_tokens"])
+
     def core_step(self, z, e, mask, i):
         u = z + e  # input injection: the encoded facts/question are re-read every step
         for blk in self.core[min(i, len(self.core) - 1)]:
@@ -139,9 +149,9 @@ class ZReasoner(nn.Module):
         if self.cfg.untied_steps:
             steps = self.cfg.untied_steps
         qb = batch["q_batch"]
-        facts = self.embed_text(batch["fact_tokens"])                  # (B, F, d)
-        qv = self.embed_text(batch["q_tokens"])                        # (Nq, d)
-        opt_emb = self.opt_proj(self.embed_text(batch["opt_tokens"]))  # (Nq, K, d)
+        facts = self.embed(batch, "fact")                              # (B, F, d)
+        qv = self.embed(batch, "q")                                    # (Nq, d)
+        opt_emb = self.opt_proj(self.embed(batch, "opt"))              # (Nq, K, d)
         e = torch.cat([qv.unsqueeze(1), facts[qb]], 1)                 # (Nq, 1+F, d)
         kind = torch.ones(e.shape[1], dtype=torch.long, device=e.device)
         kind[0] = 0

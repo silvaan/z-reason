@@ -1,6 +1,8 @@
 """Evaluate a trained run: accuracy / calibration as a function of (difficulty, steps).
 
     python eval.py runs/zr_s0 [--depths 1-16] [--max-steps 64]
+    python eval.py runs/nl_s0 --task nl [--split test]     # natural-language task, held-out wording
+    python eval.py runs/pw_s0 --task proofwriter --pw depth-5/test --tag _pw_d5
 
 Writes runs/<name>/eval.json. A single forward pass with trace=True gives the
 readout after every step, so the whole steps axis costs one run of max_steps.
@@ -10,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -18,6 +21,7 @@ import torch
 
 from zreason.api import ZReason
 from zreason.batching import collate, to_device
+from zreason.nl_tasks import make_nl_dataset
 from zreason.tasks import make_dataset
 
 STEPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128]
@@ -109,7 +113,11 @@ def root_guess_baseline(exs):
     (the best a model can do without following the chain). Returns {depth: acc}."""
     by = defaultdict(list)
     for ex in exs:
-        roots = [rhs for rhs in (ln.split("=")[1] for ln in ex.state.split(";")) if rhs.isdigit()]
+        if "\n" in ex.state:  # natural-language task: the roots are the sentences that state a number
+            roots = [f for f in (re.findall(r"\d", ln) for ln in ex.state.split("\n")) if f]
+            roots = [r[0] for r in roots]
+        else:
+            roots = [rhs for rhs in (ln.split("=")[1] for ln in ex.state.split(";")) if rhs.isdigit()]
         for qid, q in ex.questions.items():
             if q["type"] == "choice":
                 by[ex.meta[qid]["depth"]].append(sum(int(r) == ex.labels[qid] for r in roots) / len(roots))
@@ -146,17 +154,37 @@ def main():
     ap.add_argument("--max-steps", type=int, default=128)
     ap.add_argument("--seed", type=int, default=12345)
     ap.add_argument("--tag", default="", help="suffix for the output file: eval<tag>.json")
+    ap.add_argument("--task", default="chain", choices=["chain", "nl", "proofwriter"])
+    ap.add_argument("--pw", default="depth-5/test", help="proofwriter only: <config>/<split>")
+    ap.add_argument("--split", default="train", choices=["train", "test"],
+                    help="nl only: sentence templates seen in training, or the held-out ones")
     args = ap.parse_args()
     lo, hi = map(int, args.depths.split("-"))
     api = ZReason.load(args.run)
     train_depth = json.loads((Path(args.run) / "config.json").read_text())["train"]["train_depth"]
-    exs = make_dataset(args.seed, args.n, range(lo, hi + 1))
+    if args.task == "proofwriter":
+        from zreason import proofwriter
+        exs = proofwriter.load(*args.pw.split("/"))
+        lo, hi = 0, max(m["depth"] for e in exs for m in e.meta.values())
+    elif args.task == "nl":
+        from train import nl_lines
+        exs = [nl_lines(e) for e in make_nl_dataset(args.seed, args.n, range(lo, hi + 1), n_questions=4,
+                                                    split=args.split)]
+    else:
+        exs = make_dataset(args.seed, args.n, range(lo, hi + 1))
     rows, auto_rows = run_eval(api, exs, args.max_steps)
     res = summarize(rows)
     if auto_rows:
         res["auto"] = summarize_auto(auto_rows)
     res["train_depth"] = train_depth
-    res["root_guess_choice"] = root_guess_baseline(exs)
+    res["task"], res["split"] = args.task, args.split
+    if args.task == "proofwriter":
+        res["pw"] = args.pw
+        res["majority_by_depth"] = {d: max(np.mean([e.labels[k] == c for e in exs for k in e.labels
+                                                    if e.meta[k]["depth"] == d]) for c in range(3))
+                                    for d in sorted({m["depth"] for e in exs for m in e.meta.values()})}
+    else:
+        res["root_guess_choice"] = root_guess_baseline(exs)
     (Path(args.run) / f"eval{args.tag}.json").write_text(json.dumps(res, indent=1))
     steps = sorted(res["acc"])
     print("depth " + " ".join(f"{s:>5}" for s in steps))

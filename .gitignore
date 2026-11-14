@@ -17,3 +17,6 @@ paper/*.fls
 paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/arxiv_submission.tar.gz
+
+# z-Laya encoder-state caches (large, regenerable with cache_laya.py)
+cache/

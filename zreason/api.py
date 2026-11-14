@@ -51,10 +51,17 @@ class ZReason:
     @classmethod
     def load(cls, run_dir: str | Path, device="cuda"):
         run_dir = Path(run_dir)
-        cfg = ZConfig(**json.loads((run_dir / "config.json").read_text())["model"])
+        full = json.loads((run_dir / "config.json").read_text())
+        cfg = ZConfig(**full["model"])
         model = ZReasoner(cfg)
         model.load_state_dict(torch.load(run_dir / "model.pt", map_location="cpu", weights_only=True))
-        return cls(model, device=device, name=f"zreason-{run_dir.name}")
+        api = cls(model, device=device, name=f"zreason-{run_dir.name}")
+        api.tok = CharTokenizer(max_len=cfg.max_pos)
+        if cfg.ext_dim:  # texts become frozen Laya vectors; only strings of the NL task are known
+            from .laya_features import VectorTable
+            name = "pw" if full["train"].get("task") == "proofwriter" else "nl"
+            api.tok = VectorTable(Path(__file__).resolve().parent.parent / "cache" / f"{name}_vectors.pt")
+        return api
 
     @torch.no_grad()
     def predict(self, state, questions: dict, steps: int | str = 16, max_steps: int = 128,

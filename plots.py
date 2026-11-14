@@ -1,7 +1,9 @@
 """Paper figures from runs/*/eval.json.
 
     python plots.py --main runs/zr_s0 runs/zr_s1 runs/zr_s2 \
-        --fixed runs/fixed8_s0 --untied runs/untied8_s0 --out figures
+        --fixed runs/fixed8_s0 --untied runs/untied8_s0 \
+        --nl runs/nl_laya_s0 runs/nl_laya_s1 runs/nl_laya_s2 \
+        --pw runs/pw_s0 runs/pw_s1 runs/pw_s2 --pw-fixed1 runs/pw_fixed1_s0 --out paper/figures
 """
 
 from __future__ import annotations
@@ -33,26 +35,26 @@ plt.rcParams.update({
 METRIC = "choice"  # headline metric: choice accuracy (chance 10%, needs the full chain)
 
 
-def load(run):
-    r = json.loads((Path(run) / "eval.json").read_text())
+def load(run, tag=""):
+    r = json.loads((Path(run) / f"eval{tag}.json").read_text())
     src = r["acc"] if METRIC == "all" else r["acc_by_type"][{"choice": "0", "score": "1", "noul": "2"}[METRIC]]
     acc = {int(s): {int(d): v for d, v in dd.items()} for s, dd in src.items()}
     return r, acc
 
 
-def mean_acc(runs):
+def mean_acc(runs, tag=""):
     """-> steps, depths, array (n_runs, n_steps, n_depths)."""
-    accs = [load(r)[1] for r in runs]
+    accs = [load(r, tag)[1] for r in runs]
     steps = sorted(accs[0])
     depths = sorted(accs[0][steps[0]])
     a = np.array([[[acc[s][d] for d in depths] for s in steps] for acc in accs])
     return steps, depths, a
 
 
-def fig_steps_curves(runs, train_depth, out):
-    steps, depths, a = mean_acc(runs)
+def fig_steps_curves(runs, train_depth, out, tag="", pick=(1, 4, 8, 10, 12, 16), name="fig1_accuracy_vs_steps.png",
+                     title="More latent steps solve harder problems"):
+    steps, depths, a = mean_acc(runs, tag)
     m, sd = a.mean(0), a.std(0)
-    pick = [1, 4, 8, 10, 12, 16]
     pick = [d for d in pick if d in depths]
     fig, ax = plt.subplots(figsize=(6.4, 4))
     for c, d in zip(RAMP, pick):
@@ -66,10 +68,10 @@ def fig_steps_curves(runs, train_depth, out):
     ax.set_xlabel("latent reasoning steps at inference")
     ax.set_ylabel(f"{METRIC} accuracy")
     ax.set_ylim(0, 1.02)
-    ax.set_title("More latent steps solve harder problems")
+    ax.set_title(title)
     ax.legend(loc="lower right", fontsize=8)
     fig.tight_layout()
-    fig.savefig(out / "fig1_accuracy_vs_steps.png", dpi=200)
+    fig.savefig(out / name, dpi=200)
     plt.close(fig)
 
 
@@ -224,11 +226,60 @@ def fig_steps_needed(main, train_depth, out):
     plt.close(fig)
 
 
+def fig_pw_depth(runs, fixed1, out, train_depth=3):
+    """ProofWriter depth-5 test: accuracy by proof depth for several step counts, the one-pass
+    baseline and the majority answer. Depths above 5 (a few Unknown questions) are merged into 5."""
+    def by_depth(r, s):
+        a, n = r["acc"][str(s)], r["n"]
+        out = []
+        for d in range(6):
+            ds = [k for k in a if (int(k) >= 5 if d == 5 else int(k) == d)]
+            out.append(sum(a[k] * n[k] for k in ds) / sum(n[k] for k in ds))
+        return np.array(out)
+    rs = [json.loads((Path(r) / "eval_pw_depth-5.json").read_text()) for r in runs]
+    depths = np.arange(6)
+    fig, ax = plt.subplots(figsize=(6.4, 4))
+    ax.axvspan(train_depth + 0.5, 5.4, color=GRID, alpha=0.5, lw=0)
+    ax.text(train_depth + 0.6, 0.04, "deeper than training", color=INK2, fontsize=8)
+    ends = []  # (y at depth 5, label): placed after all lines so they do not collide
+    for c, s in zip([RAMP[0], RAMP[2], RAMP[3], RAMP[5]], [1, 2, 4, 16]):
+        a = np.array([by_depth(r, s) for r in rs])
+        ax.plot(depths, a.mean(0), color=c, marker="o", ms=4, label=f"z-reason, {s} step" + ("s" if s > 1 else ""))
+        ax.fill_between(depths, a.mean(0) - a.std(0), a.mean(0) + a.std(0), color=c, alpha=0.15, lw=0)
+        ends.append([a.mean(0)[-1], f"{s} step" + ("s" if s > 1 else "")])
+    if fixed1:
+        f = json.loads((Path(fixed1) / "eval_pw_depth-5.json").read_text())
+        ax.plot(depths, by_depth(f, 1), color=SERIES[1], marker="s", ms=4, label="one-pass baseline")
+        ends.append([by_depth(f, 1)[-1], "one pass"])
+    ends.sort()
+    for i in range(1, len(ends)):
+        ends[i][0] = max(ends[i][0], ends[i - 1][0] + 0.05)
+    for y, t in ends:
+        ax.text(5.1, y, t, va="center", fontsize=8, color=INK2)
+    m, n = rs[0]["majority_by_depth"], rs[0]["n"]
+    maj = [sum(m[k] * n[k] for k in m if (int(k) >= 5 if d == 5 else int(k) == d))
+           / sum(n[k] for k in m if (int(k) >= 5 if d == 5 else int(k) == d)) for d in range(6)]
+    ax.plot(depths, maj, color=INK2, ls=(0, (4, 2)), lw=1.5, label="majority answer")
+    ax.set_xticks(depths)
+    ax.set_xlim(-0.2, 6.0)
+    ax.set_xlabel("proof depth of the question")
+    ax.set_ylabel("accuracy")
+    ax.set_ylim(0, 1.02)
+    ax.set_title("ProofWriter, trained on depth 3, tested on depth 5")
+    ax.legend(loc="lower left", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(out / "fig8_pw_depth.png", dpi=200)
+    plt.close(fig)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--main", nargs="+", required=True)
     ap.add_argument("--fixed", nargs="*", default=[])
     ap.add_argument("--untied", nargs="*", default=[])
+    ap.add_argument("--nl", nargs="*", default=[], help="v2: natural-language variable tracking runs")
+    ap.add_argument("--pw", nargs="*", default=[], help="v2: ProofWriter runs")
+    ap.add_argument("--pw-fixed1")
     ap.add_argument("--out", default="figures")
     ap.add_argument("--metric", default="choice", choices=["choice", "score", "noul", "all"])
     args = ap.parse_args()
@@ -243,6 +294,11 @@ def main():
     fig_calibration(args.main, out)
     fig_auto(args.main, td, out)
     fig_steps_needed(args.main, td, out)
+    if args.nl:
+        fig_steps_curves(args.nl, load(args.nl[0], "_nl_train")[0]["train_depth"], out, tag="_nl_train",
+                         pick=(1, 4, 8, 16, 24), name="fig7_nl_steps.png", title="Variable tracking in natural language")
+    if args.pw:
+        fig_pw_depth(args.pw, args.pw_fixed1, out)
     print("wrote", sorted(p.name for p in out.glob("*.png")))
 
 

@@ -4,6 +4,7 @@ Example:
     python train.py --out runs/zr_s0 --seed 0
     python train.py --out runs/fixed8_s0 --fixed-steps 8        # baseline: no random steps
     python train.py --out runs/untied8_s0 --untied 8            # baseline: standard deep transformer
+    python train.py --out runs/nl_s0 --task nl                  # natural-language variable tracking
 """
 
 from __future__ import annotations
@@ -23,6 +24,10 @@ from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 
 from zreason.batching import collate, to_device
 from zreason.model import Block, ZConfig, ZReasoner, correct, question_loss
+from zreason.laya_features import VectorTable, build_vectors
+from zreason import proofwriter
+from zreason.laya_tables import split_facts
+from zreason.nl_tasks import make_nl_dataset, make_nl_example
 from zreason.tasks import make_chain_example, make_dataset
 from zreason.tokenizer import CharTokenizer
 
@@ -37,24 +42,62 @@ class ChainStream(IterableDataset):
     loss plateau whose escape is seed-dependent.
     """
 
-    def __init__(self, seed, batch_size, max_depth, n_questions, level):
+    def __init__(self, seed, batch_size, max_depth, n_questions, level, task="chain", tok=None):
         self.seed, self.bs, self.max_depth, self.nq, self.level = seed, batch_size, max_depth, n_questions, level
-        self.tok = CharTokenizer()
+        self.task = task
+        self.tok = tok or CharTokenizer()
 
     def __iter__(self):
         wi = get_worker_info()
         rng = random.Random(self.seed * 1000 + (wi.id if wi else 0))
         while True:
             f = self.level.value
-            max_vars = 2 + round(f * 38)
+            max_vars = 2 + round(f * (26 if self.task == "nl" else 38))
             dmax = max(1, round(f * self.max_depth))
             exs = []
             for _ in range(self.bs):
                 d = rng.randint(1, dmax)
-                exs.append(make_chain_example(rng, d, n_questions=self.nq,
-                                              min_vars=min(24, max(2, max_vars // 2)), max_vars=max(max_vars, d + 1)))
+                if self.task == "nl":
+                    exs.append(nl_lines(make_nl_example(rng, d, n_questions=self.nq,
+                                                        min_vars=min(16, max(2, max_vars // 2)), max_vars=max(max_vars, d + 1))))
+                else:
+                    exs.append(make_chain_example(rng, d, n_questions=self.nq,
+                                                  min_vars=min(24, max(2, max_vars // 2)), max_vars=max(max_vars, d + 1)))
             yield collate([{"state": e.state, "questions": e.questions} for e in exs], self.tok,
                           labels=[e.labels for e in exs])
+
+
+class ProofWriterStream(IterableDataset):
+    """Theories of the ProofWriter training set with up to `n_questions` questions each. The
+    curriculum caps the proof depth of the questions (0 -> max_depth) instead of program size."""
+
+    def __init__(self, exs, seed, batch_size, max_depth, n_questions, level, tok, rename=False):
+        self.exs, self.seed, self.bs, self.max_depth, self.nq, self.level, self.tok, self.rename = \
+            exs, seed, batch_size, max_depth, n_questions, level, tok, rename
+
+    def __iter__(self):
+        wi = get_worker_info()
+        rng = random.Random(self.seed * 1000 + (wi.id if wi else 0))
+        while True:
+            cap = round(self.level.value * self.max_depth)
+            reqs, labels = [], []
+            while len(reqs) < self.bs:
+                e = rng.choice(self.exs)
+                ok = [k for k in e.questions if e.meta[k]["depth"] <= cap]
+                if not ok:
+                    continue
+                ks = rng.sample(ok, min(self.nq, len(ok)))
+                if self.rename:
+                    e = proofwriter.rename(e, rng)
+                reqs.append({"state": e.state, "questions": {k: e.questions[k] for k in ks}})
+                labels.append({k: e.labels[k] for k in ks})
+            yield collate(reqs, self.tok, labels=labels)
+
+
+def nl_lines(e):
+    """One sentence per line, so the batching splits the state into facts."""
+    e.state = "\n".join(split_facts(e.state))
+    return e
 
 
 def sample_steps(rng: np.random.Generator, mean: float, max_steps: int, sigma: float = 0.5) -> int:
@@ -102,6 +145,18 @@ def main():
     ap.add_argument("--curriculum", type=float, default=0.8,
                     help="raise the curriculum level when EMA choice accuracy exceeds this (0 = no curriculum)")
     ap.add_argument("--level-step", type=float, default=0.1)
+    ap.add_argument("--task", default="chain", choices=["chain", "nl", "proofwriter"])
+    ap.add_argument("--full-level-by", type=float, default=0.0,
+                    help="if >0, the curriculum level reaches 1 by this fraction of training whatever the accuracy, "
+                         "so a baseline that cannot pass the threshold still sees every depth (0 = v1 behavior)")
+    ap.add_argument("--features", default="chars", choices=["chars", "laya"],
+                    help="laya: frozen Laya sentence vectors instead of the character encoder")
+    ap.add_argument("--pw-rename", action="store_true",
+                    help="proofwriter: rename entities, attributes and relations of each training theory "
+                         "(consistent bijection) so theories cannot be memorized; needs --features chars")
+    ap.add_argument("--max-chars", type=int, default=64,
+                    help="characters per fact, question or option for the character encoder "
+                         "(ProofWriter sentences reach 122 in depth-3/5 and 158 in NatLang)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
@@ -109,9 +164,19 @@ def main():
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     device = "cuda"
-    tok = CharTokenizer()
+    assert not (args.pw_rename and args.features == "laya"), "renamed texts have no precomputed vectors"
+    if args.features == "laya":
+        assert args.task in ("nl", "proofwriter")
+        vec_path = Path(f"cache/{'pw' if args.task == 'proofwriter' else 'nl'}_vectors.pt")
+        if not vec_path.exists():
+            vec_path.parent.mkdir(exist_ok=True)
+            build_vectors(vec_path, *(proofwriter.vector_strings() if args.task == "proofwriter" else (None, None)))
+        tok = VectorTable(vec_path)
+    else:
+        tok = CharTokenizer(max_len=args.max_chars)
 
-    cfg = ZConfig(vocab_size=tok.vocab_size, d=args.d, heads=8, n_core=args.n_core, untied_steps=args.untied)
+    cfg = ZConfig(vocab_size=CharTokenizer().vocab_size, d=args.d, heads=8, n_core=args.n_core, max_pos=args.max_chars,
+                  untied_steps=args.untied, ext_dim=tok.vecs.shape[1] if args.features == "laya" else 0)
     model = ZReasoner(cfg).to(device)
     for mod in model.modules():
         if isinstance(mod, Block):
@@ -129,9 +194,18 @@ def main():
         opt, lambda i: min(1, (i + 1) / warm) * 0.5 * (1 + math.cos(math.pi * min(i / args.iters, 1))))
 
     level = mp.Value("d", 0.0 if args.curriculum else 1.0)
-    loader = DataLoader(ChainStream(args.seed, args.bs, args.train_depth, args.n_questions, level), batch_size=None,
-                        num_workers=args.workers, prefetch_factor=4, persistent_workers=True)
-    val = make_dataset(10_000 + args.seed, 64, range(1, args.train_depth + 1))
+    if args.task == "proofwriter":
+        stream = ProofWriterStream(proofwriter.load("depth-3", "train"), args.seed, args.bs, args.train_depth,
+                                   args.n_questions, level, tok, rename=args.pw_rename)
+    else:
+        stream = ChainStream(args.seed, args.bs, args.train_depth, args.n_questions, level, args.task, tok)
+    loader = DataLoader(stream, batch_size=None, num_workers=args.workers, prefetch_factor=4, persistent_workers=True)
+    if args.task == "proofwriter":  # 200 dev theories, all their questions
+        val = proofwriter.load("depth-3", "dev")[:200]
+    elif args.task == "nl":
+        val = [nl_lines(e) for e in make_nl_dataset(10_000 + args.seed, 64, range(1, args.train_depth + 1), n_questions=4)]
+    else:
+        val = make_dataset(10_000 + args.seed, 64, range(1, args.train_depth + 1))
     log = open(out / "log.jsonl", "w")
     t0 = time.time()
     model.train()
@@ -157,6 +231,8 @@ def main():
             level.value = min(1.0, level.value + args.level_step)
             last_raise, ema = it, 0.0
             print(json.dumps({"it": it, "level": level.value}), flush=True)
+        if args.full_level_by and level.value < min(1.0, it / (args.full_level_by * args.iters)):
+            level.value = min(1.0, round(it / (args.full_level_by * args.iters) / args.level_step) * args.level_step)
         if it % 100 == 0:
             acc = correct(o, batch).float().mean().item()
             rec = {"it": it, "loss": loss.item(), "acc": acc, "choice_ema": ema, "level": level.value, "steps": steps, "gn": gn.item(),

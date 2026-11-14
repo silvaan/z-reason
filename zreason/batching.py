@@ -16,7 +16,6 @@ import torch
 from .tokenizer import BOS, PAD, QRY, CharTokenizer
 
 TYPE_ID = {"choice": 0, "score": 1, "noul": 2}
-MAX_SEG = 32
 _SPLIT = re.compile(r"[;\n]+")
 
 
@@ -61,19 +60,23 @@ def _pad3(seqs: list[list[list[int]]], first: int | None) -> tuple[torch.Tensor,
 
 
 def collate(requests: list[dict], tok: CharTokenizer, labels: list[dict] | None = None) -> dict:
-    """requests: [{"state": ..., "questions": {qid: spec}}]; labels: [{qid: int}] (optional)."""
+    """requests: [{"state": ..., "questions": {qid: spec}}]; labels: [{qid: int}] (optional).
+    `tok` may also be a laya_features.VectorTable, which gives precomputed vectors instead of characters."""
+    if not isinstance(tok, CharTokenizer):
+        from .laya_features import collate_vec
+        return collate_vec(requests, tok, labels)
     facts, qtok, q_b, q_type, q_label, q_opts, q_ids = [], [], [], [], [], [], []
     n_tokens = 0
     for b, req in enumerate(requests):
-        f = [tok.encode(s)[:MAX_SEG] for s in state_facts(req["state"])] or [[]]
+        f = [tok.encode(s)[:tok.max_len] for s in state_facts(req["state"])] or [[]]
         facts.append(f)
         n_tokens += sum(map(len, f))
         for qid, q in req["questions"].items():
             q_b.append(b)
             q_ids.append((b, qid))
             q_type.append(TYPE_ID[q["type"]])
-            qtok.append([tok.encode(instruction_text(q))[:MAX_SEG]])
-            q_opts.append([tok.encode(t)[:MAX_SEG] for t in option_texts(q)])
+            qtok.append([tok.encode(instruction_text(q))[:tok.max_len]])
+            q_opts.append([tok.encode(t)[:tok.max_len] for t in option_texts(q)])
             n_tokens += len(qtok[-1][0])
             if labels is not None:
                 q_label.append(int(labels[b][qid]))

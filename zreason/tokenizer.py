@@ -6,7 +6,8 @@ CHARS = list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789=+-*
 
 
 class CharTokenizer:
-    def __init__(self):
+    def __init__(self, max_len: int = 64):
+        self.max_len = max_len  # characters kept per fact, question or option (the model's max_pos)
         self.itos = SPECIALS + CHARS
         self.stoi = {c: i for i, c in enumerate(self.itos)}
 
