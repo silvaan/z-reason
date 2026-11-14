@@ -1,0 +1,10 @@
+\begin{tabular}{lcccccc}
+\toprule
+test-time steps & 1 & 2 & 4 & 8 & 16 & 32 \\
+\midrule
+variable tracking, ms per request & 6.7 & 9.9 & 14.3 & 17.4 & 41.3 & 78.5 \\
+ProofWriter, ms per request & 13.7 & 13.6 & 22.5 & 30.0 & 61.0 & 99.2 \\
+variable tracking, requests per second in batches of 64 & 9,394 & 4,880 & 3,198 & 1,969 & 1,189 & 557 \\
+ProofWriter, requests per second in batches of 64 & 855 & 820 & 748 & 660 & 548 & 371 \\
+\bottomrule
+\end{tabular}

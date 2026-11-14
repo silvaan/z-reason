@@ -1,4 +1,4 @@
-\begin{thebibliography}{32}
+\begin{thebibliography}{41}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -35,6 +35,27 @@ Charlie Snell, Jaehoon Lee, Kelvin Xu, and Aviral Kumar.
 \newblock {API} reference.
 \newblock \url{https://docs.typesafe.ai/api.md}, 2026{\natexlab{b}}.
 \newblock TypeSafe {API} documentation. Accessed 2026-09-26.
+
+\bibitem[{Anthus}(2026)]{anthus2026glide}
+{Anthus}.
+\newblock It's not a system 1 model if it takes ten seconds.
+\newblock \url{https://anth.us/articles/glide-decision-model-ten-seconds/},
+  2026.
+\newblock Evaluation of Fastino's {GLiDE} decision model, 2 October 2026.
+  Accessed 2026-10-31.
+
+\bibitem[{PostHog}(2026)]{posthog2026jeeves}
+{PostHog}.
+\newblock Jeeves.
+\newblock \url{https://github.com/PostHog/jeeves}, 2026.
+\newblock Open decision model that reasons before answering when unsure.
+  Accessed 2026-10-31.
+
+\bibitem[Li and Wagle(2026)]{li2026llmasjev}
+Yinheng Li and Justin Wagle.
+\newblock {LLM}-as-{Jev}: {LLMs} are already {Jev}-style decision models --
+  when and how to fine-tune them.
+\newblock \emph{arXiv preprint arXiv:2610.02076}, 2026.
 
 \bibitem[Ho et~al.(2020)Ho, Jain, and Abbeel]{ho2020ddpm}
 Jonathan Ho, Ajay Jain, and Pieter Abbeel.
@@ -85,14 +106,12 @@ Alexia Jolicoeur-Martineau.
 \newblock Less is more: Recursive reasoning with tiny networks.
 \newblock \emph{arXiv preprint arXiv:2510.04871}, 2025.
 
-\bibitem[Yang et~al.(2026)Yang, Han, Zhang, Wei, Shao, Guo, and
-  Li]{yang2026stars}
-Xiao-Wen Yang, Ziyu Han, Xi-Hua Zhang, Wen-Da Wei, Jie-Jing Shao, Lan-Zhe Guo,
-  and Yu-Feng Li.
-\newblock Stabilizing recurrent dynamics for test-time scalable latent
-  reasoning in looped language models.
-\newblock In \emph{International Conference on Machine Learning}, 2026.
-\newblock arXiv:2605.26733.
+\bibitem[Tafjord et~al.(2021)Tafjord, Dalvi, and Clark]{tafjord2021proofwriter}
+Oyvind Tafjord, Bhavana Dalvi, and Peter Clark.
+\newblock {ProofWriter}: Generating implications, proofs, and abductive
+  statements over natural language.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  ACL-IJCNLP 2021}, 2021.
 
 \bibitem[Guo et~al.(2017)Guo, Pleiss, Sun, and Weinberger]{guo2017calibration}
 Chuan Guo, Geoff Pleiss, Yu~Sun, and Kilian~Q. Weinberger.
@@ -107,6 +126,31 @@ Tilmann Gneiting and Adrian~E. Raftery.
 \newblock \emph{Journal of the American Statistical Association}, 102\penalty0
   (477):\penalty0 359--378, 2007.
 \newblock \doi{10.1198/016214506000001437}.
+
+\bibitem[{Convai Innovations}(2026)]{convai2026laya}
+{Convai Innovations}.
+\newblock Laya.
+\newblock \url{https://huggingface.co/convaiinnovations/laya}, 2026.
+\newblock Open System One decision model with a {ModernBERT}-large encoder,
+  Apache-2.0. Accessed 2026-10-30.
+
+\bibitem[Warner et~al.(2024)Warner, Chaffin, Clavi{\'e}, Weller, Hallstr{\"o}m,
+  Taghadouini, Gallagher, Biswas, Ladhak, Aarsen, Cooper, Adams, Howard, and
+  Poli]{warner2024modernbert}
+Benjamin Warner, Antoine Chaffin, Benjamin Clavi{\'e}, Orion Weller, Oskar
+  Hallstr{\"o}m, Said Taghadouini, Alexis Gallagher, Raja Biswas, Faisal
+  Ladhak, Tom Aarsen, Nathan Cooper, Griffin Adams, Jeremy Howard, and Iacopo
+  Poli.
+\newblock Smarter, better, faster, longer: A modern bidirectional encoder for
+  fast, memory efficient, and long context finetuning and inference.
+\newblock \emph{arXiv preprint arXiv:2412.13663}, 2024.
+
+\bibitem[Duan et~al.(2026)Duan, Lin, Wang, Xiang, Wu, Zhang, Yan, Wang, and
+  Wei]{duan2026jeval}
+Feiyu Duan, Jiayu Lin, Jia Wang, Jun Xiang, Jialiang Wu, Xinnong Zhang, Hanqi
+  Yan, Siyuan Wang, and Zhongyu Wei.
+\newblock General decision models: Benchmarking and insights beyond {Jev}.
+\newblock \emph{arXiv preprint arXiv:2610.03935}, 2026.
 
 \bibitem[Hao et~al.(2025)Hao, Sukhbaatar, Su, Li, Hu, Weston, and
   Tian]{hao2024coconut}
@@ -218,6 +262,15 @@ Shunsuke Kamiya, Masanori Koyama, Seongcheol Jeong, Fumiya Uchiyama, Kenji
 \newblock Steering recurrent reasoners at inference time with readout feedback.
 \newblock \emph{arXiv preprint arXiv:2608.24136}, 2026.
 
+\bibitem[Yang et~al.(2026)Yang, Han, Zhang, Wei, Shao, Guo, and
+  Li]{yang2026stars}
+Xiao-Wen Yang, Ziyu Han, Xi-Hua Zhang, Wen-Da Wei, Jie-Jing Shao, Lan-Zhe Guo,
+  and Yu-Feng Li.
+\newblock Stabilizing recurrent dynamics for test-time scalable latent
+  reasoning in looped language models.
+\newblock In \emph{International Conference on Machine Learning}, 2026.
+\newblock arXiv:2605.26733.
+
 \bibitem[Fein-Ashley and Rashidinejad(2026)]{feinashley2026attractor}
 Jacob Fein-Ashley and Paria Rashidinejad.
 \newblock Solve the loop: Attractor models for language and reasoning.
@@ -239,6 +292,20 @@ Cheng-Ping Hsieh, Simeng Sun, Samuel Kriman, Shantanu Acharya, Dima Rekesh, Fei
   models?
 \newblock In \emph{Conference on Language Modeling ({COLM})}, 2024.
 \newblock arXiv:2404.06654.
+
+\bibitem[Clark et~al.(2020)Clark, Tafjord, and Richardson]{clark2020ruletaker}
+Peter Clark, Oyvind Tafjord, and Kyle Richardson.
+\newblock Transformers as soft reasoners over language.
+\newblock In \emph{Proceedings of the Twenty-Ninth International Joint
+  Conference on Artificial Intelligence}, 2020.
+
+\bibitem[Zhang et~al.(2023)Zhang, Li, Meng, Chang, and Van~den
+  Broeck]{zhang2023paradox}
+Honghua Zhang, Liunian~Harold Li, Tao Meng, Kai-Wei Chang, and Guy Van~den
+  Broeck.
+\newblock On the paradox of learning to reason from data.
+\newblock In \emph{Proceedings of the Thirty-Second International Joint
+  Conference on Artificial Intelligence}, 2023.
 
 \bibitem[Loshchilov and Hutter(2019)]{loshchilov2019adamw}
 Ilya Loshchilov and Frank Hutter.
