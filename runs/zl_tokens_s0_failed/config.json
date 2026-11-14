@@ -1,0 +1,23 @@
+{
+  "train": {
+    "out": "runs/zl_s0",
+    "cache": "cache/nl_train",
+    "seed": 0,
+    "iters": 6000,
+    "bs": 32,
+    "lr": 0.0001,
+    "wd": 0.01,
+    "train_depth": 8,
+    "steps_mean": 6,
+    "max_steps": 16,
+    "grad_steps": 6,
+    "fixed_steps": 0,
+    "untied": 0,
+    "eval_every": 500,
+    "workers": 4,
+    "curriculum": 0.8,
+    "level_step": 0.125,
+    "full_depth_by": 0.5
+  },
+  "trainable_params": 26249217
+}

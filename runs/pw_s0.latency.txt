@@ -1,0 +1,31 @@
+{
+ "gpu": "NVIDIA GeForce RTX 3060",
+ "questions_per_request": 4,
+ "batch": 64,
+ "steps": {
+  "1": {
+   "ms_per_request": 13.689792749937624,
+   "requests_per_s_batched": 854.8338317059327
+  },
+  "2": {
+   "ms_per_request": 13.616317804990103,
+   "requests_per_s_batched": 819.5570861342776
+  },
+  "4": {
+   "ms_per_request": 22.47743370011449,
+   "requests_per_s_batched": 748.0062005006671
+  },
+  "8": {
+   "ms_per_request": 30.036662765051005,
+   "requests_per_s_batched": 660.1857818768462
+  },
+  "16": {
+   "ms_per_request": 61.03586067009019,
+   "requests_per_s_batched": 547.8905882229471
+  },
+  "32": {
+   "ms_per_request": 99.24117495989776,
+   "requests_per_s_batched": 370.64098918015605
+  }
+ }
+}
